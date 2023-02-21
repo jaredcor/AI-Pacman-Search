@@ -57,7 +57,34 @@ class DFS(object):
         prints can always help you alot     
         """
         "*** TTU CS3368 YOU CODE GO HERE ***"
-        fringe = Stack()
+        from util import Stack
+        # print("Start:", problem.getStartState())
+        # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+        # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+        
+        # (1) import stack (2) intiate your variable
+        s = Stack()
+        # (3) get the start state/node
+        start = problem.getStartState()
+        # (4) push start node and empty path to stack
+        s.push((start, []))
+        # (5) initiate a visted node variable
+        visited = []
+        # (6) while there is something in your stack
+        while not s.isEmpty():
+            # 6.1 get the state and path
+            curr, path = s.pop()
+            # 6.2 if goal return goal
+            if problem.isGoalState(curr):
+                return path
+            # 6.3 else if you did not visit the state
+            elif curr not in visited:
+                # 6.3.1 pass though all successors
+                for successor in problem.getSuccessors(curr):
+                    # 6.3.2 push the sucessor to your stack
+                    s.push((successor[0], path + [successor[1]]))
+            # 6.4 add the node to visited nodes
+            visited.append(curr)
         
 
         util.raiseNotDefined()
@@ -67,6 +94,21 @@ class BFS(object):
     def breadthFirstSearch(self, problem):
         "*** TTU CS3368 READ CODE HERE ***"
         "Idea is Same as DFS But with Queue, which you Queue import from util"
+        from util import Queue
+        q = Queue()
+        start = problem.getStartState()
+        q.push((start, []))
+        visited = []
+        while not q.isEmpty():
+            curr, path = q.pop()
+            if problem.isGoalState(curr):
+                return path
+            elif curr not in visited:
+                for successor in problem.getSuccessors(curr):
+                    q.push((successor[0], path + [successor[1]]))
+            visited.append(curr)
+        
+        
         util.raiseNotDefined()
 
 
@@ -75,6 +117,21 @@ class UCS(object):
         "*** TTU CS3368 READ CODE HERE ***"
         "This is a Priority Queue so how to push your things to a priority queue?"
         "How to keep track of costs in the priotity queue? how to choose based on priority?"
+        from util import PriorityQueue
+        pq = PriorityQueue()
+        start = (problem.getStartState(), [])
+        pq.push(start, 0)
+        visited = []
+        while not pq.isEmpty():
+            curr, path = pq.pop()
+            if problem.isGoalState(curr):
+                return path
+            elif curr not in visited:
+                for successor in problem.getSuccessors(curr):
+                    pq.update((successor[0], path + [successor[1]]), problem.getCostOfActions(path + [successor[1]]))     
+            visited.append(curr)   
+            
+            
         util.raiseNotDefined()
 
 
@@ -89,4 +146,24 @@ class aSearch (object):
         "Search the node that has the lowest combined cost and heuristic first."
         "*** TTU CS3368 YOUR CODE HERE ***"
         "how to extend USC to A*"
+        from util import PriorityQueue, Counter
+        pq = PriorityQueue()
+        count = Counter()
+        start = (problem.getStartState(), [])
+        count[str(start[0])] += heuristic(start[0], problem)
+        pq.push(start, count[str(start[0])])
+        visited = []
+        while not pq.isEmpty():
+            curr, path = pq.pop()
+            if problem.isGoalState(curr):
+                return path
+            elif curr not in visited:
+                for successor in problem.getSuccessors(curr):
+                    move = path + [successor[1]]
+                    count[str(successor[0])] = problem.getCostOfActions(move)
+                    count[str(successor[0])] += heuristic(successor[0], problem)
+                    pq.push((successor[0], move), count[str(successor[0])])    
+                visited.append(curr)
+                
+                
         util.raiseNotDefined()

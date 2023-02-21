@@ -409,7 +409,18 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     cal_cost=0
     "*** TTU CS3368 YOUR CODE HERE ***"
-         
+    from util import manhattanDistance
+    positions = foodGrid.asList()
+    positions.append(position)
+    
+    for pos1 in positions:
+        for pos2 in positions:
+            # dist = manhattanHeuristic((pos1[0], pos2[0]), (pos1[1], pos2[1]))
+            dist = manhattanDistance(pos1, pos2)
+            if dist > cal_cost:
+                cal_cost = dist  
+                
+                   
     return cal_cost
 
 
